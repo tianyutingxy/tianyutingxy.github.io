@@ -200,7 +200,7 @@
   
     <div class="article-meta">
       <a href="/2015/09/14/android-wear/" class="article-date">
-  	<time datetime="2015-09-14T08:42:17.000Z" itemprop="datePublished">2015-09-14</time>
+  	<time datetime="2015-09-14T09:12:39.000Z" itemprop="datePublished">2015-09-14</time>
 </a>
     </div>
   
@@ -233,56 +233,6 @@
 <p>wear模拟器，真的太卡了，通讯的时候经常卡死，所以有手表设备还是直接用设备。</p>
 <p>但是从岳壕那里借来的Moto360一直堵在部署apk这一步上，从360的电量从40%一直耗到0%也没有安装上<em>(:з」∠)</em>。</p>
 <p>所以这里还是使用模拟器测试（我是被逼的）。</p>
-<p>ps.使用高版本的API Level是为了保证无论handheld设备还是wear设备，使用的都是最最最新版本的play-services。这样才不会出现由于版本不匹配出现无法通讯的问题。</p>
-<p>也就是下面这个问题：</p>
-<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GooglePlayServicesUtil﹕ Google Play services <span class="keyword">out of</span> <span class="type">date</span>.  Requires <span class="number">6111000</span> <span class="keyword">but</span> found <span class="number">5091534</span></span><br></pre></td></tr></table></figure>
-<p>我们先通过adb连接上wear设备（模拟器）：</p>
-<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/w5.png" alt="屏幕快照 2015-06-03 上午11.07.16.png"></p>
-<p>真机连接需要开启蓝牙调试，具体步骤这里有：</p>
-<p><a href="http://dev.seacat.cn/%E5%88%9B%E5%BB%BAAndroid_Wear_Apps/%E9%80%9A%E8%BF%87%E8%93%9D%E7%89%99%E8%B0%83%E8%AF%95.html" target="_blank" rel="external">http://dev.seacat.cn/%E5%88%9B%E5%BB%BAAndroid_Wear_Apps/%E9%80%9A%E8%BF%87%E8%93%9D%E7%89%99%E8%B0%83%E8%AF%95.html</a></p>
-<p>如果先前使用过模拟器，导致真机一直无法连上，这篇blog的评论有解决方案：</p>
-<p><a href="http://melix.github.io/blog/2014/10/android-moto360.html" target="_blank" rel="external">http://melix.github.io/blog/2014/10/android-moto360.html</a></p>
-<p>按照步骤来，没有报错就连上了。（已测可以连上真实设备）</p>
-<p> wear与handheld的数据同步是通过google play services提供的api进行操作的（所以在国内基本就被屏蔽掉了），下图是基本的通讯流程：</p>
-<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/w7.png" alt="wear_cloud_node.png"></p>
-<p>通过play services提供的Wearable Data Layer API，我们就可以在设备间传递数据或消息。以下是几个具体的工作类：</p>
-<ul>
-<li>Data Items</li>
-<li>Messages</li>
-<li>Asset</li>
-<li>WearableListenerService</li>
-<li>DataListener</li>
-<li>Channel</li>
-</ul>
-<p>其中messages提供的MessageAPI可提供发送消息的能力，用于远程控制；Assert和Channel可以进行二进制文件传递，其中Channel<br>可以传递电影之类的大文件；WearableListenerService与DataListener分别在service层与前台（foreground）提供监听数据相关的事件。</p>
-<p>这里介绍一个库，叫做OKWear，对Wearable Data Layer API进行了封装，能更便捷的使用这些api。</p>
-<p>git地址：<a href="https://github.com/AAkira/OkWear" target="_blank" rel="external">https://github.com/AAkira/OkWear</a></p>
-<p>举个栗子：</p>
-<p>wear端想要发送数据到handheld：</p>
-<figure class="highlight nimrod"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">OkWear</span> ok = new <span class="type">OkWear</span>(context);</span><br><span class="line"></span><br><span class="line"><span class="type">Payload</span> payload =</span><br><span class="line">    new <span class="type">Payload</span>.<span class="type">Builder</span>(<span class="type">PATH</span>)</span><br><span class="line">                .addPayload(<span class="string">"key1"</span>, <span class="number">0</span>) </span><br><span class="line">                .addPayload(<span class="string">"key2"</span>, <span class="string">"hello"</span>)</span><br><span class="line">                .build();</span><br><span class="line"></span><br><span class="line">// unuse callback listener</span><br><span class="line">ok.syncData(payload);</span><br><span class="line"></span><br><span class="line">// use callback listener</span><br><span class="line">ok.syncData(payload, new <span class="type">SendResultListener</span>&lt;<span class="type">DataApi</span>.<span class="type">DataItemResult</span>&gt;() &#123;</span><br><span class="line">            @<span class="type">Override</span></span><br><span class="line">            public <span class="type">void</span> onResult(<span class="type">DataApi</span>.<span class="type">DataItemResult</span> <span class="literal">result</span>) &#123;</span><br><span class="line">                <span class="type">Log</span>.v(<span class="type">TAG</span>, <span class="string">"Status: "</span> + <span class="literal">result</span>.getStatus());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br></pre></td></tr></table></figure>
-<p>接着在handheld注册下接收事件即可：</p>
-<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">OkWear ok = <span class="keyword">new</span> OkWear(<span class="keyword">this</span>);</span><br><span class="line">ok.registReceiver(<span class="keyword">this</span>);</span><br></pre></td></tr></table></figure>
-<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onReceiveMessage</span><span class="params">(MessageEvent messageEvent)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (messageEvent.getPath().equals(PATH)) &#123;</span><br><span class="line">        <span class="keyword">final</span> String messagePayload = <span class="keyword">new</span> String(messageEvent.getData());</span><br><span class="line">        Log.v(TAG, messagePayload);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onReceiveDataApi</span><span class="params">(DataEventBuffer dataEventBuffer)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (DataEvent event : dataEventBuffer) &#123;</span><br><span class="line">        <span class="keyword">final</span> DataMap dataMap = DataMap.fromByteArray(event.getDataItem().getData());</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> data1 = dataMap.getInt(<span class="string">"key1"</span>);</span><br><span class="line">        <span class="keyword">final</span> String data2 = dataMap.getString(<span class="string">"key2"</span>);</span><br><span class="line">        Log.v(TAG, <span class="string">"data(int): "</span> + data1);</span><br><span class="line">        Log.v(TAG, <span class="string">"data(string): "</span> + data2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>反过来也是一样的。</p>
-<p>到这里，数据通信相关的问题基本上就基本解决了。</p>
-<p>我们想要写一个视频捕捉的app，就是在手机上录制视频，然后将画面一帧帧通过OkWear传输到wear，由于wear目前的限制的帧率问题，只能跑到3-4/s，看起来卡卡的。</p>
-<p>先上最终效果：</p>
-<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/w4.png" alt="屏幕快照 2015-06-02 下午7.32.48.png"></p>
-<p>军哥下海被打码了，233333。</p>
-<p>接着看代码：</p>
-<p>首先在handheld端，进行视频录制，在sufaceChanged时发送数据到wear：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Matrix matrix = <span class="keyword">new</span> Matrix();</span><br><span class="line">                            matrix.postRotate(mCameraOrientation);</span><br><span class="line"></span><br><span class="line">                            Bitmap bmpSmall = Bitmap.createScaledBitmap(bmp, smallWidth, smallHeight, <span class="literal">false</span>);</span><br><span class="line">                            Bitmap bmpSmallRotated = Bitmap.createBitmap(bmpSmall, <span class="number">0</span>, <span class="number">0</span>, smallWidth, smallHeight, matrix, <span class="literal">false</span>);</span><br><span class="line">                            ByteArrayOutputStream baos = <span class="keyword">new</span> ByteArrayOutputStream();</span><br><span class="line">                            bmpSmallRotated.compress(Bitmap.CompressFormat.WEBP, <span class="number">30</span>, baos);</span><br><span class="line">                            displayFrameLag++;</span><br><span class="line">                            sendToWearable(String.format(<span class="string">"show %d"</span>, System.currentTimeMillis()), baos.toByteArray(), <span class="keyword">new</span> ResultCallback&lt;MessageApi.SendMessageResult&gt;() &#123;</span><br><span class="line">                                @<span class="function">Override</span><br><span class="line">                                <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onResult</span><span class="params">(MessageApi.SendMessageResult result)</span> </span>&#123;</span><br><span class="line">                                    <span class="keyword">if</span>(displayFrameLag&gt;<span class="number">0</span>) displayFrameLag--;</span><br><span class="line">                                &#125;</span><br><span class="line">                            &#125;);</span><br><span class="line">                            bmp.recycle();</span><br><span class="line">                            bmpSmall.recycle();</span><br><span class="line">                            bmpSmallRotated.recycle();</span><br></pre></td></tr></table></figure>
-<figure class="highlight nimrod"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">private <span class="type">void</span> sendToWearable(<span class="type">String</span> path, byte[] data, final <span class="type">ResultCallback</span>&lt;<span class="type">MessageApi</span>.<span class="type">SendMessageResult</span>&gt; callback) &#123;</span><br><span class="line">        <span class="keyword">if</span> (mWearableNode != null) &#123;</span><br><span class="line">            mOkWear.sendMessage(mWearableNode,data,path,new <span class="type">SendResultListener</span>&lt;<span class="type">MessageApi</span>.<span class="type">SendMessageResult</span>&gt;() &#123;</span><br><span class="line">                @<span class="type">Override</span></span><br><span class="line">                public <span class="type">void</span> onResult(<span class="type">MessageApi</span>.<span class="type">SendMessageResult</span> <span class="literal">result</span>) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (callback != null) &#123;</span><br><span class="line">                        callback.onResult(<span class="literal">result</span>);</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">if</span> (!<span class="literal">result</span>.getStatus().isSuccess()) &#123;</span><br><span class="line">                        <span class="keyword">if</span>(D) <span class="type">Log</span>.d(<span class="type">TAG</span>, <span class="string">"ERROR: failed to send Message: "</span> + <span class="literal">result</span>.getStatus());</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span>(D) <span class="type">Log</span>.d(<span class="type">TAG</span>, <span class="string">"ERROR: tried to send message before device was found"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>接着wear端注册OkWear的接收事件：</p>
-<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="function"><span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line"></span><br><span class="line">        mOkWear = <span class="keyword">new</span> OkWear(<span class="keyword">this</span>);</span><br><span class="line">        mOkWear.registReceiver(<span class="keyword">this</span>);</span><br><span class="line">        ...</span><br><span class="line">        ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onReceiveMessage</span><span class="params">(MessageEvent messageEvent)</span> </span>&#123;</span><br><span class="line">        dispatchMessageEvent(messageEvent);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>最后在dispatchMessageEvent中获取到数据，转换为bitmap绘制到wear即可：</p>
-<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> dispatchMessageEvent(MessageEvent m) &#123;</span><br><span class="line">        Scanner s = <span class="keyword">new</span> Scanner(m.getPath());</span><br><span class="line">        <span class="keyword">String</span> command = s.next();</span><br><span class="line">        <span class="keyword">if</span> (command.equals(<span class="string">"stop"</span>)) &#123;</span><br><span class="line">            mPreviewRunning = <span class="keyword">false</span>;</span><br><span class="line">            moveTaskToBack(<span class="keyword">true</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (command.equals(<span class="string">"start"</span>)) &#123;</span><br><span class="line">            mPreviewRunning = <span class="keyword">true</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (command.equals(<span class="string">"show"</span>)) &#123;</span><br><span class="line">            <span class="built_in">byte</span>[] data = m.getData();</span><br><span class="line">            Bitmap bmpSmall = BitmapFactory.decodeByteArray(data, <span class="number">0</span>, data.length);</span><br><span class="line">            setBitmap(bmpSmall);</span><br><span class="line">            <span class="keyword">if</span>(mPhoneNode != <span class="keyword">null</span> &amp;&amp; s.hasNextLong() &amp;&amp; (frameNumber++%<span class="number">8</span>) == <span class="number">0</span>) &#123;</span><br><span class="line">                sendToPhone(<span class="keyword">String</span>.format(<span class="string">"received %d"</span>, s.nextLong()), <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span>(command.equals(<span class="string">"result"</span>)) &#123;</span><br><span class="line">            <span class="keyword">if</span>(D) Log.d(TAG, <span class="string">"result"</span>);</span><br><span class="line">            onMessageResult(m.getData());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">onMessageResult</span><span class="params">(final byte[] data)</span> </span>&#123;</span><br><span class="line">        runOnUiThread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">            @<span class="function">Override</span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                Bitmap bmp = BitmapFactory.decodeByteArray(data, <span class="number">0</span>, data.length);</span><br><span class="line">                mMenuAdapter.mCameraFragment.cameraResult.setImageBitmap(bmp);</span><br><span class="line">                mMenuAdapter.mCameraFragment.cameraResult.setTranslationX(<span class="number">0</span>);</span><br><span class="line">                mMenuAdapter.mCameraFragment.cameraResult.setRotation(<span class="number">0</span>);</span><br><span class="line">                mMenuAdapter.mCameraFragment.cameraResult.setVisibility(View.VISIBLE);</span><br><span class="line">                mMenuAdapter.mCameraFragment.cameraResult.animate().setDuration(<span class="number">500</span>).translationX(mMenuAdapter.mCameraFragment.cameraPreview.getWidth()).rotation(<span class="number">40</span>).withEndAction(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                        mMenuAdapter.mCameraFragment.cameraResult.setVisibility(View.GONE);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/w6.png" alt="屏幕快照 2015-06-03 下午2.19.30.png"></p>
-<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/w1.jpg" alt="哈哈哈哈哈.jpg"></p>
-<p>这样基本的功能就有了，handheld端拍摄，并将每一帧的数据传输给wear，然后wear上展示~</p>
-
       
     </div>
     
@@ -295,6 +245,10 @@
 
       
 
+      
+        <p class="article-more-link">
+          <a  href="/2015/09/14/android-wear/#more">more >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>
@@ -340,64 +294,9 @@
 <p>本文将编写一个小的apk，用于展示基础视频弹幕功能。</p>
 <p>视频播放功能将由编译出的ijkplay库去解码，弹幕层功能将由此次开源的DanmakuFlameMaster来完成。</p>
 <p>开发工具使用Android Studio，同时使用到的两个基本库地址如下：</p>
-<p>ijkplay库：<a href="https://github.com/Bilibili/ijkplayer" target="_blank" rel="external">https://github.com/Bilibili/ijkplayer</a></p>
-<p>DanmakuFlameMaster库：<a href="https://github.com/Bilibili/DanmakuFlameMaster" target="_blank" rel="external">https://github.com/Bilibili/DanmakuFlameMaster</a></p>
+<p>ijkplay库：<a href="https://github.com/Bilibili/ijkplayer">https://github.com/Bilibili/ijkplayer</a></p>
+<p>DanmakuFlameMaster库：<a href="https://github.com/Bilibili/DanmakuFlameMaster">https://github.com/Bilibili/DanmakuFlameMaster</a></p>
 <p><strong>注：以下所有代码编译需要NDK支持</strong></p>
-<h3 id="1-_首先我们clone出ijkplay的代码。">1. 首先我们clone出ijkplay的代码。</h3><p>ijkplay基于FFmpeg n2.6，支持Android API Level 9，同时跨平台。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone <span class="string">https:</span><span class="comment">//github.com/Bilibili/ijkplayer.git ijkplayer-android</span></span><br></pre></td></tr></table></figure>
-<p>拉下来代码后，我们就不做任何优化配置了，直接运行初始化的脚本。</p>
-<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./init-android.<span class="keyword">sh</span></span><br></pre></td></tr></table></figure>
-<p>脚本会将下载FFmpeg的源码，并放到android/ffmpeg-armv7a目录（还有x86、armv5等平台）</p>
-<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/d2.png" alt="ffmpeg"></p>
-<h3 id="2-_下载完成后，接下来我们将代码导入到Android_Studio中，编译出ijkmediaplayer">2. 下载完成后，接下来我们将代码导入到Android Studio中，编译出ijkmediaplayer</h3><p>首先保证系统的环境变量中有ANDROID_SDK,ANDROID_NDK两个变量，分别指向相应目录。</p>
-<p>进入android目录touch一个local.properties,配置好sdk和ndk的地址</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sdk.dir=<span class="regexp">/Users/</span>tianyutingxy<span class="regexp">/Downloads/</span>dev/sdk</span><br><span class="line">ndk.dir=<span class="regexp">/Users/</span>tianyutingxy<span class="regexp">/Android/</span>NDK/android-ndk-r10d</span><br></pre></td></tr></table></figure>
-<p>然后修改根目录下setting.gradle,我们只需要这几个项目（ijkmediaplayer、ijkmediademo、ijkmediawidget），其他的注释掉：</p>
-<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">include</span> <span class="string">':ijkmediaplayer'</span></span><br><span class="line"><span class="comment">// include ':ijkmediaplayer-x86'</span></span><br><span class="line"><span class="comment">// include ':ijkmediaplayer-arm64-v8a'</span></span><br><span class="line"><span class="keyword">include</span> <span class="string">':ijkmediademo'</span></span><br><span class="line"><span class="comment">// include ':ijkmediaplayer-armv5'</span></span><br><span class="line"><span class="keyword">include</span> <span class="string">':ijkmediawidget'</span></span><br></pre></td></tr></table></figure>
-<p><em>ijkmediaplayer是一个ffplay的Java wrapper。</em></p>
-<p><em>ijkmediawidget是一个可以在安卓里使用的view，调用ijkmediaplayer</em></p>
-<p><em>ijkmediademo是播放视频的测试demo</em></p>
-<p>随后，进入ijkmediaplayer目录，编辑build.gradle，注释掉line 15,23,24,27。我们本地没有这样的测试环境，不注释掉会gradle会报错，所以不需要鬼东西，直接注释掉。</p>
-<figure class="highlight vhdl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//instrumentTest.setRoot(<span class="attribute">'tests</span>')</span><br><span class="line">//debug.setRoot(<span class="attribute">'build</span>-types/debug')</span><br><span class="line">//<span class="keyword">release</span>.setRoot(<span class="attribute">'build</span>-types/<span class="keyword">release</span>')</span><br><span class="line">//apply from: rootProject.<span class="keyword">file</span>(<span class="attribute">'gradle</span>/compile-ijkplayer.gradle')</span><br></pre></td></tr></table></figure>
-<p>好了，接下来可以开Android Studio导入项目然后直接run，或者在terminal中敲gradlew installDebug，编译这个ijkmediademo。</p>
-<p>安装到手机上的效果：</p>
-<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/d6.jpg" alt="player.jpg"></p>
-<h3 id="3-_最后一步，添加弹幕层！">3. 最后一步，添加弹幕层！</h3><p>clone一份DanmakuFlameMaster的代码</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone <span class="string">https:</span><span class="comment">//github.com/Bilibili/DanmakuFlameMaster.git</span></span><br></pre></td></tr></table></figure>
-<p>DanmakuFlameMaster就是我们需要的弹幕引擎</p>
-<p>优点好像很厉害的样子|_・)</p>
-<ul>
-<li><p>使用多种方式(View/SurfaceView/TextureView)实现高效绘制</p>
-</li>
-<li><p>B站xml弹幕格式解析</p>
-</li>
-<li><p>基础弹幕精确还原绘制</p>
-</li>
-<li><p>支持mode7特殊弹幕</p>
-</li>
-<li><p>多核机型优化，高效的预缓存机制</p>
-</li>
-<li><p>支持多种显示效果选项实时切换</p>
-</li>
-<li><p>实时弹幕显示支持</p>
-</li>
-<li><p>换行弹幕支持/运动弹幕支持</p>
-</li>
-<li><p>支持自定义字体</p>
-</li>
-<li><p>支持多种弹幕参数设置</p>
-</li>
-<li><p>支持多种方式的弹幕屏蔽</p>
-</li>
-</ul>
-<p>接着直接把代码导入到Android Studio中即可，没有什么需要修改的地方。</p>
-<p>你们要是有兴趣就去研究这个弹幕引擎吧(;´༎ຶД༎ຶ`)  </p>
-<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/d4.png" alt="struct"></p>
-<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/d3.png" alt="struct"></p>
-<p>两个项目都需要保留，同时把sample中的视频播放器修改为第二步编译出来的ijkmediaplayer。</p>
-<p>好了，接着运行，我们来看看弹幕效果|_・)</p>
-<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/d5.jpg" alt="danmuku.jpg"></p>
-<h3 id="其实我本来想把所有弹幕数据都换成我是帅比，可我毕竟是一个有良知的人。|_・)">其实我本来想把所有弹幕数据都换成我是帅比，可我毕竟是一个有良知的人。|_・)</h3>
       
     </div>
     
@@ -410,6 +309,10 @@
 
       
 
+      
+        <p class="article-more-link">
+          <a  href="/2015/09/14/danmuku/#more">more >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>
