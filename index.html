@@ -64,18 +64,26 @@
     <article id="post-android-wear" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2015/09/14/android-wear/" class="article-date">
-  <time datetime="2015-09-14T08:08:50.000Z" itemprop="datePublished">2015-09-14</time>
+  <time datetime="2015-09-14T08:19:26.000Z" itemprop="datePublished">2015-09-14</time>
 </a>
     
   </div>
   <div class="article-inner">
     
     
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/09/14/android-wear/">Android Wear 初体验</a>
+    </h1>
+  
+
+      </header>
+    
     <div class="article-entry" itemprop="articleBody">
       
-        <blockquote>
-<p>目的：</p>
-</blockquote>
+        <p>目的：</p>
 <ol>
 <li><p>了解wear和handheld（手持设备）如何通讯（只考虑同步数据）</p>
 </li>
@@ -90,14 +98,14 @@
 <p>也就是下面这个问题：</p>
 <figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GooglePlayServicesUtil﹕ Google Play services <span class="keyword">out of</span> <span class="type">date</span>.  Requires <span class="number">6111000</span> <span class="keyword">but</span> found <span class="number">5091534</span></span><br></pre></td></tr></table></figure>
 <p>我们先通过adb连接上wear设备（模拟器）：</p>
-<p><img src="https://moji.wemomo.com/attach/npcm0oetv8oajozzww.png" alt="屏幕快照 2015-06-03 上午11.07.16.png"></p>
+<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/w5.png" alt="屏幕快照 2015-06-03 上午11.07.16.png"></p>
 <p>真机连接需要开启蓝牙调试，具体步骤这里有：</p>
 <p><a href="http://dev.seacat.cn/%E5%88%9B%E5%BB%BAAndroid_Wear_Apps/%E9%80%9A%E8%BF%87%E8%93%9D%E7%89%99%E8%B0%83%E8%AF%95.html" target="_blank" rel="external">http://dev.seacat.cn/%E5%88%9B%E5%BB%BAAndroid_Wear_Apps/%E9%80%9A%E8%BF%87%E8%93%9D%E7%89%99%E8%B0%83%E8%AF%95.html</a></p>
 <p>如果先前使用过模拟器，导致真机一直无法连上，这篇blog的评论有解决方案：</p>
 <p><a href="http://melix.github.io/blog/2014/10/android-moto360.html" target="_blank" rel="external">http://melix.github.io/blog/2014/10/android-moto360.html</a></p>
 <p>按照步骤来，没有报错就连上了。（已测可以连上真实设备）</p>
 <p> wear与handheld的数据同步是通过google play services提供的api进行操作的（所以在国内基本就被屏蔽掉了），下图是基本的通讯流程：</p>
-<p><img src="https://moji.wemomo.com/attach/npcm7m1235oiasbs2jy.png" alt="wear_cloud_node.png"></p>
+<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/w7.png" alt="wear_cloud_node.png"></p>
 <p>通过play services提供的Wearable Data Layer API，我们就可以在设备间传递数据或消息。以下是几个具体的工作类：</p>
 <ul>
 <li>Data Items</li>
@@ -120,7 +128,7 @@
 <p>到这里，数据通信相关的问题基本上就基本解决了。</p>
 <p>我们想要写一个视频捕捉的app，就是在手机上录制视频，然后将画面一帧帧通过OkWear传输到wear，由于wear目前的限制的帧率问题，只能跑到3-4/s，看起来卡卡的。</p>
 <p>先上最终效果：</p>
-<p><img src="https://moji.wemomo.com/attach/npcso4y0by60q5xck8.png =300x300" alt="屏幕快照 2015-06-02 下午7.32.48.png"></p>
+<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/w4.png =300x300" alt="屏幕快照 2015-06-02 下午7.32.48.png"></p>
 <p>军哥下海被打码了，233333。</p>
 <p>接着看代码：</p>
 <p>首先在handheld端，进行视频录制，在sufaceChanged时发送数据到wear：</p>
@@ -132,14 +140,14 @@
 <p>最后在dispatchMessageEvent中获取到数据，转换为bitmap绘制到wear即可：</p>
 <figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> dispatchMessageEvent(MessageEvent m) &#123;</span><br><span class="line">        Scanner s = <span class="keyword">new</span> Scanner(m.getPath());</span><br><span class="line">        <span class="keyword">String</span> command = s.next();</span><br><span class="line">        <span class="keyword">if</span> (command.equals(<span class="string">"stop"</span>)) &#123;</span><br><span class="line">            mPreviewRunning = <span class="keyword">false</span>;</span><br><span class="line">            moveTaskToBack(<span class="keyword">true</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (command.equals(<span class="string">"start"</span>)) &#123;</span><br><span class="line">            mPreviewRunning = <span class="keyword">true</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (command.equals(<span class="string">"show"</span>)) &#123;</span><br><span class="line">            <span class="built_in">byte</span>[] data = m.getData();</span><br><span class="line">            Bitmap bmpSmall = BitmapFactory.decodeByteArray(data, <span class="number">0</span>, data.length);</span><br><span class="line">            setBitmap(bmpSmall);</span><br><span class="line">            <span class="keyword">if</span>(mPhoneNode != <span class="keyword">null</span> &amp;&amp; s.hasNextLong() &amp;&amp; (frameNumber++%<span class="number">8</span>) == <span class="number">0</span>) &#123;</span><br><span class="line">                sendToPhone(<span class="keyword">String</span>.format(<span class="string">"received %d"</span>, s.nextLong()), <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span>(command.equals(<span class="string">"result"</span>)) &#123;</span><br><span class="line">            <span class="keyword">if</span>(D) Log.d(TAG, <span class="string">"result"</span>);</span><br><span class="line">            onMessageResult(m.getData());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">onMessageResult</span><span class="params">(final byte[] data)</span> </span>&#123;</span><br><span class="line">        runOnUiThread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">            @<span class="function">Override</span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                Bitmap bmp = BitmapFactory.decodeByteArray(data, <span class="number">0</span>, data.length);</span><br><span class="line">                mMenuAdapter.mCameraFragment.cameraResult.setImageBitmap(bmp);</span><br><span class="line">                mMenuAdapter.mCameraFragment.cameraResult.setTranslationX(<span class="number">0</span>);</span><br><span class="line">                mMenuAdapter.mCameraFragment.cameraResult.setRotation(<span class="number">0</span>);</span><br><span class="line">                mMenuAdapter.mCameraFragment.cameraResult.setVisibility(View.VISIBLE);</span><br><span class="line">                mMenuAdapter.mCameraFragment.cameraResult.animate().setDuration(<span class="number">500</span>).translationX(mMenuAdapter.mCameraFragment.cameraPreview.getWidth()).rotation(<span class="number">40</span>).withEndAction(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                        mMenuAdapter.mCameraFragment.cameraResult.setVisibility(View.GONE);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p><img src="https://moji.wemomo.com/attach/npcvp716irhr1meayvj.png =300x300" alt="屏幕快照 2015-06-03 下午2.19.30.png"></p>
-<p><img src="https://moji.wemomo.com/attach/npcw3arr1jngzkwqmk.jpg =300x300" alt="哈哈哈哈哈.jpg"></p>
+<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/w6.png =300x300" alt="屏幕快照 2015-06-03 下午2.19.30.png"></p>
+<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/w1.jpg =300x450" alt="哈哈哈哈哈.jpg"></p>
 <p>这样基本的功能就有了，handheld端拍摄，并将每一帧的数据传输给wear，然后wear上展示~</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/09/14/android-wear/" data-id="ciejngctg00006xgstklgfxdc" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/09/14/android-wear/" data-id="ciejntkwl000085gskzjmykn3" class="article-share-link">Share</a>
       
       
     </footer>
@@ -184,7 +192,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/09/14/hello-world/" data-id="ciejngctx00016xgsg4da1nc8" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/09/14/hello-world/" data-id="ciejntkxh000185gss0idq5o6" class="article-share-link">Share</a>
       
       
     </footer>
@@ -221,7 +229,7 @@
       <ul>
         
           <li>
-            <a href="/2015/09/14/android-wear/">(no title)</a>
+            <a href="/2015/09/14/android-wear/">Android Wear 初体验</a>
           </li>
         
           <li>
