@@ -31,10 +31,10 @@ wear模拟器，真的太卡了，通讯的时候经常卡死，所以有手表�
 但是从岳壕那里借来的Moto360一直堵在部署apk这一步上，从360">
 <meta property="og:image" content="http://7xlsey.com1.z0.glb.clouddn.com/w5.png">
 <meta property="og:image" content="http://7xlsey.com1.z0.glb.clouddn.com/w7.png">
-<meta property="og:image" content="http://7xlsey.com1.z0.glb.clouddn.com/w4.png =300x300">
-<meta property="og:image" content="http://7xlsey.com1.z0.glb.clouddn.com/w6.png =300x300">
-<meta property="og:image" content="http://7xlsey.com1.z0.glb.clouddn.com/w1.jpg =300x450">
-<meta property="og:updated_time" content="2015-09-14T08:19:26.000Z">
+<meta property="og:image" content="http://7xlsey.com1.z0.glb.clouddn.com/w4.png">
+<meta property="og:image" content="http://7xlsey.com1.z0.glb.clouddn.com/w6.png">
+<meta property="og:image" content="http://7xlsey.com1.z0.glb.clouddn.com/w1.jpg">
+<meta property="og:updated_time" content="2015-09-14T08:20:51.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android Wear 初体验">
 <meta name="twitter:description" content="目的：
@@ -95,7 +95,7 @@ wear模拟器，真的太卡了，通讯的时候经常卡死，所以有手表�
         <section id="main"><article id="post-android-wear" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2015/09/14/android-wear/" class="article-date">
-  <time datetime="2015-09-14T08:19:26.000Z" itemprop="datePublished">2015-09-14</time>
+  <time datetime="2015-09-14T08:20:51.000Z" itemprop="datePublished">2015-09-14</time>
 </a>
     
   </div>
@@ -159,7 +159,7 @@ wear模拟器，真的太卡了，通讯的时候经常卡死，所以有手表�
 <p>到这里，数据通信相关的问题基本上就基本解决了。</p>
 <p>我们想要写一个视频捕捉的app，就是在手机上录制视频，然后将画面一帧帧通过OkWear传输到wear，由于wear目前的限制的帧率问题，只能跑到3-4/s，看起来卡卡的。</p>
 <p>先上最终效果：</p>
-<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/w4.png =300x300" alt="屏幕快照 2015-06-02 下午7.32.48.png"></p>
+<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/w4.png" alt="屏幕快照 2015-06-02 下午7.32.48.png"></p>
 <p>军哥下海被打码了，233333。</p>
 <p>接着看代码：</p>
 <p>首先在handheld端，进行视频录制，在sufaceChanged时发送数据到wear：</p>
@@ -171,14 +171,14 @@ wear模拟器，真的太卡了，通讯的时候经常卡死，所以有手表�
 <p>最后在dispatchMessageEvent中获取到数据，转换为bitmap绘制到wear即可：</p>
 <figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> dispatchMessageEvent(MessageEvent m) &#123;</span><br><span class="line">        Scanner s = <span class="keyword">new</span> Scanner(m.getPath());</span><br><span class="line">        <span class="keyword">String</span> command = s.next();</span><br><span class="line">        <span class="keyword">if</span> (command.equals(<span class="string">"stop"</span>)) &#123;</span><br><span class="line">            mPreviewRunning = <span class="keyword">false</span>;</span><br><span class="line">            moveTaskToBack(<span class="keyword">true</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (command.equals(<span class="string">"start"</span>)) &#123;</span><br><span class="line">            mPreviewRunning = <span class="keyword">true</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (command.equals(<span class="string">"show"</span>)) &#123;</span><br><span class="line">            <span class="built_in">byte</span>[] data = m.getData();</span><br><span class="line">            Bitmap bmpSmall = BitmapFactory.decodeByteArray(data, <span class="number">0</span>, data.length);</span><br><span class="line">            setBitmap(bmpSmall);</span><br><span class="line">            <span class="keyword">if</span>(mPhoneNode != <span class="keyword">null</span> &amp;&amp; s.hasNextLong() &amp;&amp; (frameNumber++%<span class="number">8</span>) == <span class="number">0</span>) &#123;</span><br><span class="line">                sendToPhone(<span class="keyword">String</span>.format(<span class="string">"received %d"</span>, s.nextLong()), <span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span>(command.equals(<span class="string">"result"</span>)) &#123;</span><br><span class="line">            <span class="keyword">if</span>(D) Log.d(TAG, <span class="string">"result"</span>);</span><br><span class="line">            onMessageResult(m.getData());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">onMessageResult</span><span class="params">(final byte[] data)</span> </span>&#123;</span><br><span class="line">        runOnUiThread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">            @<span class="function">Override</span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                Bitmap bmp = BitmapFactory.decodeByteArray(data, <span class="number">0</span>, data.length);</span><br><span class="line">                mMenuAdapter.mCameraFragment.cameraResult.setImageBitmap(bmp);</span><br><span class="line">                mMenuAdapter.mCameraFragment.cameraResult.setTranslationX(<span class="number">0</span>);</span><br><span class="line">                mMenuAdapter.mCameraFragment.cameraResult.setRotation(<span class="number">0</span>);</span><br><span class="line">                mMenuAdapter.mCameraFragment.cameraResult.setVisibility(View.VISIBLE);</span><br><span class="line">                mMenuAdapter.mCameraFragment.cameraResult.animate().setDuration(<span class="number">500</span>).translationX(mMenuAdapter.mCameraFragment.cameraPreview.getWidth()).rotation(<span class="number">40</span>).withEndAction(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                        mMenuAdapter.mCameraFragment.cameraResult.setVisibility(View.GONE);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/w6.png =300x300" alt="屏幕快照 2015-06-03 下午2.19.30.png"></p>
-<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/w1.jpg =300x450" alt="哈哈哈哈哈.jpg"></p>
+<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/w6.png" alt="屏幕快照 2015-06-03 下午2.19.30.png"></p>
+<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/w1.jpg" alt="哈哈哈哈哈.jpg"></p>
 <p>这样基本的功能就有了，handheld端拍摄，并将每一帧的数据传输给wear，然后wear上展示~</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/09/14/android-wear/" data-id="ciejntkwl000085gskzjmykn3" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/09/14/android-wear/" data-id="ciejnvdha00008rgstnpwejnb" class="article-share-link">Share</a>
       
       
     </footer>
