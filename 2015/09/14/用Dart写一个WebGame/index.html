@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <title>【web】用Dart写一个WebGame | tianyutingxy的Blog</title>
+  <meta name="description" content="客官请留步" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="MobileOptimized" content="320" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" type="text/css" href="/css/component.css" />
+  <link rel="stylesheet" type="text/css" href="/css/screen.css" />
+  <meta name="generator" content="tianyutingxy的Blog">
+  <script src="http://static.duoshuo.com/embed.js"></script>
+  
+  
+  
+
+  
+
+</head>
+<body>
+<div class="container">
+    <div class="mp-pusher" id="mp-pusher">
+        <i id="scroll-up" class="fa fa-angle-up"></i>
+        <nav id="mp-menu" class="mp-menu">
+            <div class="mp-level">
+                <a data-pjax class="back-home" style="font-size: 20px" href="/"><h2 ><i class="fa fa-home"></i>
+                        Home</h2></a>
+                <ul class="first-level">
+                    <li>
+                        <a class="fa fa-archive" href="#"><i class="fa fa-angle-left">
+                            </i>&nbsp;&nbsp;Archive</a>
+                        <div class="mp-level page-list">
+                            <h2 ><i class="fa fa-archive"></i>
+                                Archive</h2>
+                            <a class="mp-back" href="#">back</a>
+                            <form id="search-form" action="">
+                                <input type="text" class="search search-archive" placeholder="Search.."/>
+                            </form>
+                            <ul>
+                                <div class="mp-scroll">
+                                
+                                <li class="search-archive-li mp-pjax">
+                                    <a href="/2015/09/14/用Dart写一个WebGame/">【web】用Dart写一个WebGame</a>
+                                </li>
+                                
+                                <li class="search-archive-li mp-pjax">
+                                    <a href="/2015/09/14/android-wear/">Android Wear 初体验</a>
+                                </li>
+                                
+                                <li class="search-archive-li mp-pjax">
+                                    <a href="/2015/09/14/danmuku/">ijkplayer+DanmakuFlameMaster组成弹幕</a>
+                                </li>
+                                
+                                </div>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <a class="fa fa-copy" href="#"><i class="fa fa-angle-left">
+                            </i>&nbsp;&nbsp;Categories</a>
+
+                        <div class="mp-level page-list">
+                            <h2 ><i class="fa fa-copy"></i>
+                                Categories</h2>
+                            <a class="mp-back" href="#">back</a>
+                            <form id="search-form" action="">
+                                <input type="text" class="search search-category" placeholder="Search.."/>
+                            </form>
+                            <ul>
+                                <div class="mp-scroll">
+                                
+                                </div>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <a class="fa fa-tags" href="#"><i class="fa fa-angle-left">
+                            </i>&nbsp;&nbsp;Tags</a>
+                        <div class="mp-level page-list">
+                            <h2 ><i class="fa fa-tags"></i>
+                                Tags</h2>
+                            <a class="mp-back" href="#">back</a>
+                            <form id="search-form" action="">
+                                <input type="text" class="search search-tag" placeholder="Search.."/>
+                            </form>
+                            <ul>
+                                <div class="mp-scroll">
+                                
+                                <li class="search-tag-li mp-pjax">
+                                    <a href="/tags/android/">&nbsp;&nbsp;&nbsp;android</a>
+                                    <small>3</small>
+                                </li>
+                                
+                                </div>
+                            </ul>
+                        </div>
+                    </li>
+                    
+                    <li class="mp-pjax"><a class="fa fa-user" href="/about">&nbsp;&nbsp;&nbsp;About me</a></li>
+                    <li><a class="fa fa-github" href="#">&nbsp;&nbsp;&nbsp;Github</a></li>
+
+                </ul>
+
+            </div>
+        </nav>
+        <div id="pjax">
+            <div class="pjax-hidden" style="display: none">
+                
+                    <a  data-pjax href="/2015/09/14/用Dart写一个WebGame/">【web】用Dart写一个WebGame</a>
+                
+                    <a  data-pjax href="/2015/09/14/android-wear/">Android Wear 初体验</a>
+                
+                    <a  data-pjax href="/2015/09/14/danmuku/">ijkplayer+DanmakuFlameMaster组成弹幕</a>
+                
+                
+                
+                    <a data-pjax href="/tags/android/">&nbsp;&nbsp;android</a>
+                
+                <a data-pjax class="fa fa-user" href="/about">&nbsp;&nbsp;&nbsp;About me</a>
+            </div>
+            <nav class="nexus">
+                <li  style="border-left: 1px solid #c6d0da;">
+                    <a id="trigger" href="#"><i class="fa fa-bars"></i></a>
+                </li>
+                <li ><a id="nexus-back" data-pjax href="/">tianyutingxy的Blog</a></li>
+                
+                <div id="nav-container">
+                    <div class="post-navbar" style="line-height: 63px;display:none">
+                        <li id="navbar-title"><a href="#">【web】用Dart写一个WebGame</a></li>
+                        <li id="navbar-toc" style="border-left: none">
+                            <a style="padding-right: 15px">
+                                <span id="toc-content" >Introduction</span><i class="fa fa-chevron-down" ></i>
+                            </a>
+                            <div class="hidden-box">
+                                <ul id="toc"></ul>
+                            </div>
+                        </li>
+                    </div>
+                </div>
+                
+            </nav>
+
+            <div class="scroller">
+            <div class="scroller-inner">
+
+
+<!-- -->
+<!--<body class="post-template">-->
+<!---->
+  
+
+<main class="content" role="main">
+    <article class="post" >
+    <span class="post-meta">
+                  <div class="tag-tile">
+                      
+                      
+                      <a data-pjax href='/tags/android/' style='color:#D5D5D5'>android</a>
+                      
+                      
+                  </div>
+                <h1 class="post-title" style="margin: 14px 0;color:#50585D">【web】用Dart写一个WebGame</h1>
+
+                    <div class="post-meta">
+                        Post on<span class="fa fa-clock-o"></span>
+                        <time datetime="2015-09-14T10:10:24.000Z"
+                              itemprop="datePublished">2015-09-14</time>
+                    </div>
+    </span>
+
+        <section class="post-content">
+            <p>在Dart DEV的峰会上有一段介绍使用dart写游戏的视频，看完觉得碉堡了。</p>
+<p>我们就来探索一下如何使用dart编写一个基本的web类游戏，从codeproject上找到一个sample。</p>
+<p>地址：<a href="https://www.dartlang.org/events/2015/summit" target="_blank" rel="external">https://www.dartlang.org/events/2015/summit/</a></p>
+<p>这是游戏的效果：</p>
+<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/g1.png" alt=""></p>
+<p>作者已经把代码托管到了<a href="http://jsfiddle.net/ZpLAu/3/" target="_blank" rel="external">jsfiddle</a>上，大家可以直接去玩儿了</p>
+<p>我们这里大致分析一下，在dart编写游戏的流程。</p>
+<p>根据我们过往开发游戏的流程，我们在一个新的平台上开发游戏大致关心三点：</p>
+<ul>
+<li>渲染（2d&amp;3d）</li>
+<li>gameloop</li>
+<li>库(输入输出、audio…)</li>
+</ul>
+<p>这些条件满足了就可以写游戏了。</p>
+<p>我们先看dart的库，这里我们关心两个，一个是keyboard一个是audio，用于接收用户数据与播放游戏音乐。</p>
+<p><strong>Keyboard</strong></p>
+<pre><code><span class="title">part</span> <span class="keyword">of</span> lostsouls;
+<span class="class">
+<span class="keyword">class</span> <span class="type">Keyboard</span> {
+  final <span class="type">HashSet</span>&lt;int&gt; _keys = new <span class="type">HashSet</span>&lt;int&gt;<span class="container">()</span>;
+
+  <span class="type">Keyboard</span><span class="container">()</span> {
+    window.onKeyDown.listen<span class="container">((<span class="type">KeyboardEvent</span> <span class="title">e</span>)</span> {
+        _keys.add<span class="container">(<span class="title">e</span>.<span class="title">keyCode</span>)</span>;
+    });
+
+    window.onKeyUp.listen<span class="container">((<span class="type">KeyboardEvent</span> <span class="title">e</span>)</span> {
+      _keys.remove<span class="container">(<span class="title">e</span>.<span class="title">keyCode</span>)</span>;
+    });
+  }
+
+  isPressed<span class="container">(<span class="title">int</span> <span class="title">keyCode</span>)</span> =&gt; _keys.contains<span class="container">(<span class="title">keyCode</span>)</span>;
+}</span>
+</code></pre><p>这里的window对象来自于</p>
+<pre><code><span class="keyword">import</span> <span class="string">'dart:html'</span>;
+</code></pre><p>这个库基本封装了对html dom的操作，也包含监听键盘的输入，所以够这个demo用了。</p>
+<p><strong>Audio</strong></p>
+<pre><code><span class="keyword">import</span> <span class="string">'dart:web_audio'</span>;
+</code></pre><p>这个库包含了音频的解码播放之类的。</p>
+<p>游戏demo在初始化的时候同时初始化了一个StateLoad类：</p>
+<pre><code>GameHost(this.<span class="keyword">canvas</span>) {
+    keyboard = new Keyboard();
+    var <span class="keyword">renderer</span> = new Renderer(<span class="keyword">canvas</span>.context2D, <span class="keyword">canvas</span>.width, <span class="keyword">canvas</span>.height);
+    currentState = new StateLoad(keyboard, <span class="keyword">renderer</span>);
+  }
+</code></pre><p>这个类用于控制游戏状态以及音频资源：</p>
+<pre><code>StateLoad(<span class="keyword">final</span> Keyboard keyboard, <span class="keyword">final</span> Renderer renderer) : <span class="keyword">super</span>(keyboard, renderer, <span class="literal">null</span>) {
+    <span class="keyword">var</span> clips =
+        [ 
+          <span class="keyword">new</span> SoundClip(<span class="string">"wallhit"</span>, <span class="string">"audio/73563__stanestane__bunny-push.wav"</span>, <span class="literal">false</span>),
+          <span class="keyword">new</span> SoundClip(<span class="string">"anchormanwallhit"</span>, <span class="string">"audio/124382__cubix__8bit-snare.wav"</span>, <span class="literal">false</span>),
+          <span class="keyword">new</span> SoundClip(<span class="string">"lostsouldsaved"</span>, <span class="string">"audio/153445__lukechalaudio__8bit-robot-sound.wav"</span>, <span class="literal">false</span>), <span class="comment">//1.346s</span>
+          <span class="keyword">new</span> SoundClip(<span class="string">"tractorbeam"</span>, <span class="string">"audio/211235__rjonesxlr8__explosion-15.wav"</span>, <span class="literal">true</span>),
+          <span class="keyword">new</span> SoundClip(<span class="string">"levelwon"</span>, <span class="string">"audio/211379__rjonesxlr8__coinpickup-06.wav"</span>, <span class="literal">false</span>),
+          <span class="keyword">new</span> SoundClip(<span class="string">"gameover"</span>, <span class="string">"audio/213149__radiy__8bit-style-bonus-effect.wav"</span>, <span class="literal">false</span>),
+          <span class="keyword">new</span> SoundClip(<span class="string">"music"</span>, <span class="string">"audio/166393__questiion__lost-moons-serious-as-an-attack-button.wav"</span>, <span class="literal">true</span>),
+          <span class="keyword">new</span> SoundClip(<span class="string">"spottedbylostsoul"</span>, <span class="string">"audio/211325__rjonesxlr8__powerup-13.wav"</span>, <span class="literal">false</span>)
+        ];
+
+    _newAudioManager = <span class="keyword">new</span> AudioManager(<span class="keyword">new</span> AudioContext(),  clips, _onAudioLoaded, _onAllAudioLoaded);
+  }
+</code></pre><p>这里只是指定了音频资源的url，并没有加载数据到内存中，真正的加载是异步的。在项目封装的AudioManager中，在AudioManger的构造函数中开始异步加载这些音频资源。</p>
+<pre><code><span class="keyword">void</span> _loadBuffers() {
+    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; _clips.length; i++) {
+      _clips[i]._context = _context;
+      _loadBuffer(_clips[i], i);
+    }
+  }
+
+  <span class="keyword">void</span> _loadBuffer(<span class="keyword">final</span> SoundClip clip, <span class="keyword">final</span> <span class="built_in">int</span> index) {
+    <span class="keyword">final</span> HttpRequest request = <span class="keyword">new</span> HttpRequest();
+    request.open(<span class="string">"GET"</span>, clip._url, async: <span class="keyword">true</span>);
+    request.responseType = <span class="string">"arraybuffer"</span>;
+    request.onLoadEnd.listen((e) =&gt; _onBufferLoaded(request, clip, index));
+    request.onError.listen((e) =&gt; _handleError(e, clip));
+
+    <span class="keyword">try</span> {
+      request.send();
+    }
+    <span class="keyword">catch</span>(ex) {
+      clip._broken = <span class="keyword">true</span>;
+      _notify(clip);
+    }
+  }
+</code></pre><p>这个写法简直和C#一样,写起来真是顺顺的。|_・)</p>
+<p>这样游戏demo关于音频这块也够用了。</p>
+<p>ps.附一张游戏状态🐔</p>
+<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/g_statemachine%202.png" alt="statemachine.png"></p>
+<p>接下来分析游戏主逻辑。一个是游戏循环，一个是页面渲染：</p>
+<p><strong>gameloop</strong></p>
+<p>游戏内的循环，依旧是调用window（dart:html）提供的方法。</p>
+<pre><code><span class="function"><span class="keyword">void</span> <span class="title">requestRedraw</span><span class="params">()</span> </span>{
+   window.requestAnimationFrame(draw);
+ }
+</code></pre><p>我们需要的就是不停的自循环，同时处理逻辑</p>
+<pre><code><span class="keyword">void</span> draw(<span class="built_in">num</span> _) {
+    <span class="keyword">final</span> <span class="built_in">num</span> time = <span class="keyword">new</span> <span class="built_in">DateTime</span>.now().millisecondsSinceEpoch;
+    <span class="keyword">if</span> (renderTime != <span class="keyword">null</span>)
+      showFps(_, <span class="number">1000</span> / (time - renderTime));
+    renderTime = time;
+
+    <span class="built_in">double</span> elapsed = <span class="number">0.0</span>;
+    <span class="keyword">if</span> (lastTimestamp != <span class="number">0</span>) {
+      elapsed = (time - lastTimestamp) / <span class="number">1000.0</span>;
+    }
+
+    lastTimestamp = time;
+    <span class="keyword">if</span> (currentState != <span class="keyword">null</span>) {
+      <span class="keyword">var</span> nextState = currentState._update(elapsed);
+      currentState._render();
+      <span class="keyword">if</span> (currentState != nextState) {
+        currentState = nextState;
+        currentState._initialize();
+      }
+    }
+
+    requestRedraw();
+  }
+</code></pre><p>这里需要处理的逻辑有：</p>
+<ul>
+<li>读取输入数据</li>
+<li>计算上一帧距现在流逝的时间</li>
+<li>根据输入与流失时间更新游戏状态</li>
+<li>重绘页面</li>
+<li>开始下一轮循环</li>
+</ul>
+<p>好了，到这里游戏循环也够用了。 </p>
+<p><strong>render</strong></p>
+<p>游戏里只用到了2d元素，主要是文本元素和多边形。使用的绘画工具也是系统提供的</p>
+<pre><code><span class="keyword">final</span> CanvasRenderingContext2D context;
+</code></pre><p>所有游戏的sprite都是用这个画出来，所有绘画的方法也封装到了render.dart中：</p>
+<pre><code>class Renderer {
+ <span class="keyword"> final</span> CanvasRenderingContext2D context;
+ <span class="keyword"> final</span><span class="instruction"> int </span>_width;
+ <span class="keyword"> final</span><span class="instruction"> int </span>_height;
+ <span class="instruction"> double </span>_previousGlobalAlpha = 1.0;
+
+  *
+  *
+  *
+
+  void<span class="function"> fillPolygon(</span>List&lt;Vector2D&gt; polygon, String fill<span class="function">)</span> {<span class="keyword">
+final</span> Vector2D start = polygon<span class="keyword">[</span>0];
+context..fillStyle =<span class="instruction"> fill
+</span><span class="keyword">       .</span>.beginPath(<span class="function">)</span>
+<span class="keyword">       .</span>.moveTo(start.x, start.y<span class="function">)</span>;
+
+for(var i = 1; i &lt; polygon.length; ++i<span class="function">)</span> {
+ <span class="keyword"> final</span> Vector2D point = polygon<span class="keyword">[</span>i];
+ <span class="function"> context.lineTo(</span>point.x, point.y<span class="function">)</span>;
+    }
+
+context..closePath(<span class="function">)</span>
+<span class="keyword">       .</span>.fill(<span class="function">)</span>;
+      }
+}
+</code></pre><p>好了，现在所有元素具备，我们把dart编译成js就可以放到浏览器里运行了。满帧运行很流畅！而且好玩！</p>
+<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/g3.png" alt=""></p>
+
+        </section>
+        <hr/>
+        <nav class="pagination" style="width:auto" role="pagination">
+            
+            <a style="cursor:default" class="newer-posts" href="#">This is the First Post</a>
+            
+            <a class="share-button" data-original-title title>Share this Post</a>
+            
+            <a data-pjax class="older-posts" href="/2015/09/14/android-wear/">Next Post →</a>
+            
+        </nav>
+        <br/>
+        <br/>
+        <section id="comment">
+            <div id="comment-box"></div>
+        </section>
+
+
+    </article>
+</main>
+
+
+  
+<footer class="site-footer">
+    
+    <div class="inner">
+        <section class="copyright"><a href="/"></a> &copy; tianyutingxy的Blog 2014</section>
+        <section class="poweredby">Published with <a target="_blank" href="http://hexo.io/">Hexo   </a> and Theme by <a target="_blank" href="https://github.com/yuche/hexo-theme-kael">Kael</a></section>
+    </div>
+</footer>
+</div>
+</div><!-- /scroller -->
+
+</div><!-- /pusher -->
+</div><!-- /container -->
+</div>
+
+<!-- Easter eggs -->
+
+<div class="egg animated">
+    <a id="close-button" href="#">X</a>
+    <div class="block">
+        <div class="loading">
+            <span class="ball1"></span>
+            <span class="ball2"></span>
+        </div>
+    </div>
+</div>
+  
+<script src="//cdn.staticfile.org/jquery/1.11.0/jquery.min.js"></script>
+<script>
+    if (!window.jQuery) {
+        var script = document.createElement('script');
+        script.src = "/js/jquery.min.js";
+        document.body.appendChild(script);
+    }
+</script>
+<script type="text/javascript" src="/js/lib.js"></script>
+<script type="text/javascript" src="/js/main.js"></script>
+
+
+
+
+
+
+
+</body>
+</html>
