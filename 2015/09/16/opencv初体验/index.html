@@ -4,7 +4,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-  <title>Archives: 2015 | tianyutingxy的Blog</title>
+  <title>OpenCV初体验 | tianyutingxy的Blog</title>
   <meta name="description" content="客官请留步" />
   <meta name="HandheldFriendly" content="True" />
   <meta name="MobileOptimized" content="320" />
@@ -147,7 +147,7 @@
                 
                 <div id="nav-container">
                     <div class="post-navbar" style="line-height: 63px;display:none">
-                        <li id="navbar-title"><a href="#">undefined</a></li>
+                        <li id="navbar-title"><a href="#">OpenCV初体验</a></li>
                         <li id="navbar-toc" style="border-left: none">
                             <a style="padding-right: 15px">
                                 <span id="toc-content" >Introduction</span><i class="fa fa-chevron-down" ></i>
@@ -166,224 +166,125 @@
 
 
 <!-- -->
-<!--<body class="home-template">-->
+<!--<body class="post-template">-->
 <!---->
   
+
 <main class="content" role="main">
+    <article class="post" >
+    <span class="post-meta">
+                  <div class="tag-tile">
+                      
+                      
+                      <a data-pjax href='/tags/android/' style='color:#D5D5D5'>android</a>
+                      
+                      
+                  </div>
+                <h1 class="post-title" style="margin: 14px 0;color:#50585D">OpenCV初体验</h1>
 
-    
-    <article class="post">
+                    <div class="post-meta">
+                        Post on<span class="fa fa-clock-o"></span>
+                        <time datetime="2015-09-16T04:11:55.000Z"
+                              itemprop="datePublished">2015-09-16</time>
+                    </div>
+    </span>
 
-        <header class="post-header">
-            <div class="tag-tile">
-                
-                
-                <a data-pjax href='/tags/android/'>android</a>
-                
-                
-                <span class="fa fa-bookmark" style="float:right;color:#f39c12"></span>
-            </div>
-            <h1 class="post-title"><a data-pjax href="/2015/09/16/opencv初体验/">OpenCV初体验</a>
-            </h1>
-
-            <div class="post-meta">
-                Post on<span class="fa fa-clock-o"></span>
-                <time datetime="2015-09-16T04:11:55.000Z"
-                      itemprop="datePublished">2015-09-16</time>
-            </div>
-        </header>
-        <section class="post-excerpt">
-            <p>
-                
-                <blockquote>
+        <section class="post-content">
+            <blockquote>
 <p>前言</p>
 </blockquote>
 <p>OpenAV是一个跨平台且高效的图像处理库。</p>
 <p><img src="http://7xlsey.com1.z0.glb.clouddn.com/o1.jpg" alt=""></p>
-                
-            </p>
-            
-        </section>
-    </article>
-    
-    <article class="post">
+<a id="more"></a>
+<blockquote>
+<p>正文</p>
+</blockquote>
+<p>原本研究视频拍摄实时滤镜，研究研究着方向就歪了，看了一些OpenCV处理图像的效果，觉得非常厉害，写了个Demo给大家介绍下。</p>
+<p>有个APP叫“扫描全能王”，用这个app拍摄完图片后会自动识别文件的边缘，并把文件从照片上抠下来拉伸为标准的纸张大小，如下所示。</p>
+<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/o2.jpg" alt=""><br><img src="http://7xlsey.com1.z0.glb.clouddn.com/o3.jpg" alt=""></p>
+<p>实现的原理就是透视变换(perspective transform)，OpenCV是可以直接实现。我们就从这个效果开始了解OpenCV。</p>
+<p>OpenCV封装了一批常用的图片操作函数，并封装到了<strong>Imgproc</strong>这个类中。</p>
+<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/o6.jpg" alt=""></p>
+<p>例如包含获取图片直方信息、边缘检测、马赛克、霍夫变换等，我们摘几个函数演示一下：</p>
+<pre><code><span class="keyword">switch</span> (mProcessMethod) {
+        <span class="keyword">case</span> Canny:
+            mRgba = inputFrame.rgba();
+            Imgproc.Canny(inputFrame.gray(), mTmp, <span class="number">80</span>, <span class="number">100</span>);
+            Imgproc.cvtColor(mTmp, mRgba, Imgproc.COLOR_GRAY2RGBA, <span class="number">4</span>);
+            <span class="keyword">break</span>;
+        <span class="keyword">case</span> HoughLines:
+            Imgproc.Canny(mRgba, mIntermediateMat, <span class="number">80</span>, <span class="number">100</span>);
+            rgbaInnerWindow = mRgba.submat(top, top + height, left, left + width);
+            Imgproc.cvtColor(mIntermediateMat, rgbaInnerWindow, Imgproc.COLOR_GRAY2BGRA, <span class="number">4</span>);
+            Mat lines = <span class="keyword">new</span> Mat();
+            Imgproc.HoughLines(mIntermediateMat, lines, <span class="number">1</span>, Math.PI / <span class="number">180</span>, <span class="number">150</span>);
 
-        <header class="post-header">
-            <div class="tag-tile">
-                
-                
-                <a data-pjax href='/tags/android/'>android</a>
-                
-                
-                <span class="fa fa-bookmark" style="float:right;color:#f39c12"></span>
-            </div>
-            <h1 class="post-title"><a data-pjax href="/2015/09/14/使用facebook infer检测静态代码/">使用facebook infer检查静态代码</a>
-            </h1>
-
-            <div class="post-meta">
-                Post on<span class="fa fa-clock-o"></span>
-                <time datetime="2015-09-14T10:55:11.000Z"
-                      itemprop="datePublished">2015-09-14</time>
-            </div>
-        </header>
-        <section class="post-excerpt">
-            <p>
-                
-                <p>这几个版本我们每次公测前或beta前都会通过自身测试找到一些bug，有些bug比较严重导致crash或者anr，导致影响发版时间延后或加班。</p>
-<p>由于代码的整体review在几个beta和整个版本趋于稳定之后才会进行，同时一些bug和业务无关，测试通常覆盖不到，这些原因也间接导致了代码不稳定性不易暴露。</p>
-<p>正对以上两点，除加强自测和review外，我们希望通过引进静态的分析工具，能在人为review之前尽可能查找出由于个人风格或粗心大意引起的bug，再通过人工review二次加强代码质量。</p>
-                
-            </p>
-            
-        </section>
-    </article>
-    
-    <article class="post">
-
-        <header class="post-header">
-            <div class="tag-tile">
-                
-                
-                <a data-pjax href='/tags/android/'>android</a>
-                
-                
-                <span class="fa fa-bookmark" style="float:right;color:#f39c12"></span>
-            </div>
-            <h1 class="post-title"><a data-pjax href="/2015/09/14/使用chromium courgette进行增量升级/">使用chromium courgette进行增量升级</a>
-            </h1>
-
-            <div class="post-meta">
-                Post on<span class="fa fa-clock-o"></span>
-                <time datetime="2015-09-14T10:45:38.000Z"
-                      itemprop="datePublished">2015-09-14</time>
-            </div>
-        </header>
-        <section class="post-excerpt">
-            <p>
-                
-                <p>谷歌是个大忽悠</p>
-<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/c1.png" alt=""></p>
-<p>我们看到这个图之后，荷尔蒙一升决定研究一下这个courgette，看能不能替换现有的bsdiff，来一个质的跳跃。</p>
-<p>这个项目是chromium的一个子项目，所以我们先要把最新chromium源码拉下来。</p>
-<p>你想pull代码光有git不行，我们要gclient，这个命令在depot_tools里，这个depot_tools是包含了一堆编译、同步代码的工具，所以我们先要把这个装上。</p>
-                
-            </p>
-            
-        </section>
-    </article>
-    
-    <article class="post">
-
-        <header class="post-header">
-            <div class="tag-tile">
-                
-                
-                <a data-pjax href='/tags/android/'>android</a>
-                
-                
-                <span class="fa fa-bookmark" style="float:right;color:#f39c12"></span>
-            </div>
-            <h1 class="post-title"><a data-pjax href="/2015/09/14/用Dart写一个WebGame/">【web】用Dart写一个WebGame</a>
-            </h1>
-
-            <div class="post-meta">
-                Post on<span class="fa fa-clock-o"></span>
-                <time datetime="2015-09-14T10:12:50.000Z"
-                      itemprop="datePublished">2015-09-14</time>
-            </div>
-        </header>
-        <section class="post-excerpt">
-            <p>
-                
-                <p>在Dart DEV的峰会上有一段介绍使用dart写游戏的视频，看完觉得碉堡了。</p>
-<p>我们就来探索一下如何使用dart编写一个基本的web类游戏，从<a href="https://www.dartlang.org/events/2015/summit">codeproject</a>上找到一个sample。</p>
-                
-            </p>
-            
-        </section>
-    </article>
-    
-    <article class="post">
-
-        <header class="post-header">
-            <div class="tag-tile">
-                
-                
-                <a data-pjax href='/tags/android/'>android</a>
-                
-                
-                <span class="fa fa-bookmark" style="float:right;color:#f39c12"></span>
-            </div>
-            <h1 class="post-title"><a data-pjax href="/2015/09/14/android-wear/">Android Wear 初体验</a>
-            </h1>
-
-            <div class="post-meta">
-                Post on<span class="fa fa-clock-o"></span>
-                <time datetime="2015-09-14T09:12:39.000Z"
-                      itemprop="datePublished">2015-09-14</time>
-            </div>
-        </header>
-        <section class="post-excerpt">
-            <p>
-                
-                <p>目的：</p>
+            <span class="keyword">if</span> (lines.cols() &gt; <span class="number">0</span>) {
+                <span class="keyword">double</span>[] data;
+                <span class="keyword">double</span> rho, theta;
+                Point pt1 = <span class="keyword">new</span> Point();
+                Point pt2 = <span class="keyword">new</span> Point();
+                <span class="keyword">double</span> a, b;
+                <span class="keyword">double</span> x0, y0;
+                <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; lines.cols(); i++) {
+                    data = lines.get(<span class="number">0</span>, i);
+                    rho = data[<span class="number">0</span>];
+                    theta = data[<span class="number">1</span>];
+                    a = Math.<span class="built_in">cos</span>(theta);
+                    b = Math.<span class="built_in">sin</span>(theta);
+                    x0 = a * rho;
+                    y0 = b * rho;
+                    pt1.x = Math.round(x0 + <span class="number">1000</span> * (-b));
+                    pt1.y = Math.round(y0 + <span class="number">1000</span> * a);
+                    pt2.x = Math.round(x0 - <span class="number">1000</span> * (-b));
+                    pt2.y = Math.round(y0 - <span class="number">1000</span> * a);
+                    Imgproc.line(mRgba, pt1, pt2, mColorsRGB[<span class="number">1</span>], <span class="number">3</span>);
+                }
+            }
+            <span class="keyword">break</span>;
+        <span class="keyword">default</span>:
+            mRgba = inputFrame.rgba();
+            <span class="keyword">break</span>;
+    }
+</code></pre><ul>
+<li>Canny（边缘检测）</li>
+</ul>
+<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/o4.jpg" alt="image"></p>
+<p>边缘检测是实时的计算速度非常快，通过边缘检测的图片信息保存下来的数据可以用作下一步霍夫变换的值线检测。</p>
+<ul>
+<li>HoughLines（霍夫变换）</li>
+</ul>
+<p>屏幕的帧率掉的非常厉害，从16fps直接跌到了6fps，实时的计算是非常慢的，而且由于限制了计算的阈值，居然只算出一条直线。。。</p>
+<p>最好是采集图像完毕后，用单张图去做霍夫变换。</p>
+<p><img src="http://7xlsey.com1.z0.glb.clouddn.com/o5.jpg" alt="image"></p>
+<blockquote>
+<p>结尾</p>
+</blockquote>
 <ol>
-<li><p>了解wear和handheld（手持设备）如何通讯（只考虑同步数据）</p>
-</li>
-<li><p>写一个视频捕捉app</p>
-</li>
+<li>OpenCV处理旋转非常山寨。</li>
+<li>OpenCV处理全屏非常山寨。</li>
+<li>OpenCV处理灰度、马赛克、放大镜非常厉害。</li>
 </ol>
-<p>测试设备是wear模拟器（基于API22的android wear系统），手持设备最低版本也需要满足API18（android 4.3+）。</p>
-<p>wear模拟器，真的太卡了，通讯的时候经常卡死，所以有手表设备还是直接用设备。</p>
-<p>但是从岳壕那里借来的Moto360一直堵在部署apk这一步上，从360的电量从40%一直耗到0%也没有安装上<em>(:з」∠)</em>。</p>
-<p>所以这里还是使用模拟器测试（我是被逼的）。</p>
-                
-            </p>
-            
-        </section>
-    </article>
-    
-    <article class="post">
 
-        <header class="post-header">
-            <div class="tag-tile">
-                
-                
-                <a data-pjax href='/tags/android/'>android</a>
-                
-                
-                <span class="fa fa-bookmark" style="float:right;color:#f39c12"></span>
-            </div>
-            <h1 class="post-title"><a data-pjax href="/2015/09/14/danmuku/">ijkplayer+DanmakuFlameMaster组成弹幕</a>
-            </h1>
-
-            <div class="post-meta">
-                Post on<span class="fa fa-clock-o"></span>
-                <time datetime="2015-09-14T08:26:22.000Z"
-                      itemprop="datePublished">2015-09-14</time>
-            </div>
-        </header>
-        <section class="post-excerpt">
-            <p>
-                
-                <p>来自安卓B站狗的怒喊，“让我们来组成弹幕！”</p>
-<p>本文将编写一个小的apk，用于展示基础视频弹幕功能。</p>
-<p>视频播放功能将由编译出的ijkplay库去解码，弹幕层功能将由此次开源的DanmakuFlameMaster来完成。</p>
-<p>开发工具使用Android Studio，同时使用到的两个基本库地址如下：</p>
-<p>ijkplay库：<a href="https://github.com/Bilibili/ijkplayer">https://github.com/Bilibili/ijkplayer</a></p>
-<p>DanmakuFlameMaster库：<a href="https://github.com/Bilibili/DanmakuFlameMaster">https://github.com/Bilibili/DanmakuFlameMaster</a></p>
-<p><strong>注：以下所有代码编译需要NDK支持</strong></p>
-                
-            </p>
-            
         </section>
+        <hr/>
+        <nav class="pagination" style="width:auto" role="pagination">
+            
+            <a style="cursor:default" class="newer-posts" href="#">This is the First Post</a>
+            
+            <a class="share-button" data-original-title title>Share this Post</a>
+            
+            <a data-pjax class="older-posts" href="/2015/09/14/使用facebook infer检测静态代码/">Next Post →</a>
+            
+        </nav>
+        <br/>
+        <br/>
+        <section id="comment">
+            <div id="comment-box"></div>
+        </section>
+
+
     </article>
-    
-    <nav class="pagination" role="pagination">
-        
-        <span class="page-number">Page 1 of 1</span>
-        
-    </nav>
 </main>
 
 
