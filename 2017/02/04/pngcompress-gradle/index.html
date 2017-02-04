@@ -192,7 +192,7 @@
     </span>
 
         <section class="post-content">
-            <h1 id="PngCompress_Plugin使用">PngCompress Plugin使用</h1><p>@(tianyutingxy’s notebook)[pngquant, gradle plugin, maven]</p>
+            <h1 id="PngCompress_Plugin使用">PngCompress Plugin使用</h1><p><code>pngquant</code> <code>gradle plugin</code> <code>maven</code></p>
 <p><strong>PngCompress</strong> 开发的目的在于，批量压缩处理项目中png图片，从一个方面所有最终apk的体积。实际使用过程中，仅处理<code>/drawable-hdpi</code>、<code>/drawable-xhdpi</code>、<code>/drawable-xxhdpi</code>，这几个目录的，同时设置忽略<code>5k</code>文件，在不包含live项目的情况下，可以多压缩出近1m的空间，压缩能力尚可，且执行操作方便。</p>
 <p><strong>PngCompress</strong>  来自开源项目<a href="https://github.com/jonyChina162/gradlePngCompress" target="_blank" rel="external">gradlePngCompress</a>，该插件可对制定目录资源文件夹，进行png遍历压缩，同时提供：</p>
 <ul>
@@ -201,7 +201,6 @@
 <li><strong>指定额外遍历路径</strong> - 默认情况下，该插件自动对drawable和mipmap资源包进行png遍历压缩，可额外添加其他路径。</li>
 </ul>
 <p>在接入我们的项目后，对其中的过滤功能做了相应的修改，屏蔽了对<code>.9 patch file</code>的压缩。PngCompress内部使用<a href="https://pngquant.org/" target="_blank" rel="external">pngquant</a>，对png进行有损压缩，但是不会破坏<code>.9 patch file</code>的格式，所以<code>.9 patch file</code>如有需要也可以进行压缩，具体原理参见github的<a href="https://github.com/pornel/pngquant/issues/37" target="_blank" rel="external">issue</a>。</p>
-<p>[TOC]</p>
 <h2 id="PngCompress原理&amp;使用方式">PngCompress原理&amp;使用方式</h2><blockquote>
 <p>PngCompress以gradle plugin的方式，在主app中插入一个pngcompresss task ，该task可以单独执行，执行完毕后，经过压缩的png图片会覆盖原有图片。</p>
 </blockquote>
